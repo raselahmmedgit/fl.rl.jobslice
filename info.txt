@@ -3,3 +3,10 @@ administrator@jobslice.com
 admin123#@
 
 https://softwareravine.visualstudio.com
+
+2014-07-21
+1. _LayoutInternalResponsive
+2. _Header
+3. _Footer
+4. Main body will go index page
+Have to do within 3 Hours

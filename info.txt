@@ -4,6 +4,8 @@ admin123#@
 
 https://softwareravine.visualstudio.com
 
+<add name="sqlConnection" connectionString="Data Source=|DataDirectory|JobSliceBeta.sdf" providerName="System.Data.SqlServerCe.4.0" />
+
 2014-07-21
 1. _LayoutInternalResponsive
 2. _Header

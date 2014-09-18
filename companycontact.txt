@@ -1,0 +1,117 @@
+<div class="portlet-body">
+                @(Html.Kendo().Grid<CompanyListViewModel>()
+        .Name("Grid")
+        .EnableCustomBinding(true)
+
+        .BindTo(Model)
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.DisplayId).Title("").HeaderTemplate(@<text>
+                <input type="checkbox" name="chkAllCompany" id="chkAllCompany" style="margin-bottom: 6px;" />
+                                                <span>Select/Un-Select All Company</span>
+                </text>); ;
+        })
+        .RowTemplate(grid => @<text>
+                <div class="col-md-12" name="applicant-details" id="divApplicant_@item.CompanyID">
+                    <div class="alert alert-success clearfix" style="margin: 0; margin-bottom: 5px;">
+                            <div class="col-md-3">                                
+                                <input type="checkbox" name="chkCompany" value="@item.CompanyID" style="margin-bottom:3px;" />
+                                <a href="@Url.Action("Dashboard", new { id = item.CompanyID, companyId = item.CompanyID })" style="vertical-align:bottom">@item.Name</a>
+                                @if (item.IsVerified)
+                                {
+                                <a name="lnkCompanyName" class="various fancybox.ajax" href='/CRM/Company/VerificationAjax/@item.CompanyID'><i class="fa fa-thumbs-up"></i></a>
+                                }
+                                else
+                                {
+                                <a name="lnkCompanyName" class="various fancybox.ajax" href='/CRM/Company/VerificationAjax/@item.CompanyID'><i class="fa fa-thumbs-down"></i></a>
+                                }
+                            <div class="title"><i class="icon-th-large"></i>@item.CompanyStatusCategoryName</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="title">
+                                    <i class="fa fa-road"></i> @item.CityName @item.StateName
+                                </div>
+                                <div class="title">
+                                    @if (item.CountryCode.IsNotNullOrEmpty())
+                                    {
+                                    <img src="@Url.Content("~/assets/img/flags/" + item.CountryCode + ".png")" />
+                                    }
+                                    @item.CountryName
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="title">
+                                    <i class="fa fa-phone"></i> @item.MainOfficePhone
+                                </div>
+                                <div class="title">
+                                    <i class="fa fa-globe"></i> <a href="@item.WebAddress" target="_blank">@item.WebAddress</a> 
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-1">
+                            <span class="tools" style="float: right; text-align: right;">
+                                    <a href='/CRM/Company/Edit/@item.CompanyID' class="fa fa-edit" title='Edit'></a>
+                                    <a href='/CRM/Company/Delete/@item.CompanyID' class='icon-remove-sign' title='Delete'></a>
+                                </span>
+                            </div>
+
+                        @*<a id="lnkToogle_@item.CompanyID" style="margin-left: 20px" onclick="toggle(this); return false" href="">Hide</a>*@
+                        <a id="lnkToogle_@item.CompanyID" style="margin-left: 28px" onclick="toggle(this); return false" href="#">
+                            <img id="down-arrow-img" src="~/assets/img/arrow/arrow-down.png" style="height: 15px; width: 15px" /></a>
+                        @*<img onclick="toggle(this); return false" src="~/assets/img/arrow/arrow-down.png" style="height:15px; width: 15px" name='example' border='0' />*@
+                    </div>
+                    <div class="" style="margin: 0; padding-top: 0px;">
+                        @(Html.Kendo().ListView<Contact>()
+    .Name("Contacts" + @item.CompanyID)
+            .TagName("div").HtmlAttributes(new { @class = "alert alert-info clearfix" })
+                .ClientTemplateId("ContactTemplate")
+    .DataSource(dataSource => dataSource
+                           .Read(read => read.Action("IndexAjax", "Contact", new { SearchByCompanyID = @item.CompanyID, IsNotApplicant = true }))
+    )
+                        )
+                    </div>
+                </div>
+                </text>
+                                ).DataSource(dataSource => dataSource.Server().Model(model => { model.Id(p => p.CompanyID); })
+                                    .Total(ViewBag.TotalRecords)
+                                    .PageSize(Constants.CommonConstants.DefaultPageSize))
+                                    .Pageable(paging => paging.Enabled(true).PageSizes(new int[5] { 5, 10, 20, 40, 50 }))
+
+        )
+            </div>
+
+            <script type="text/x-kendo-tmpl" id="ContactTemplate">
+                <div id="contact-toogle-div">
+    <div class="col-md-6" style="margin:0; margin-top:10px;">
+        <div class="note note-warning clearfix" style="min-height: 80px; margin: 0; padding-top: 10px;">
+
+            <div class="display" style="float:left;">
+                <input type="checkbox" name="chkContact" value="#=CompanyID #|#=ContactID #" />
+                <img src='/CRM/Contact/ShowContactPhoto/#=ContactID #?PhotoFileName=#=PhotoFileName #' alt='#=Name #' width="75" height="75" />
+            </div>
+            <div class="display" style="float:left; margin-left:10px;">
+                <div class="title">
+                    <a href="/CRM/Contact/Dashboard/#=ContactID #?ContactId=#=ContactID #">${FirstName} ${ (LastName==null) ? '' : LastName}</a>
+                </div>
+
+                <div class="title">
+                    ${ (PositionName==null) ? ' ' : PositionName}
+                </div>
+                <div class="title">
+                    <i class="fa fa-mobile "></i> ${ (Mobile==null) ? '' : Mobile}
+                </div>
+                <div class="title">
+                    <i class="fa fa-envelope-o"></i> ${ (PrimaryEmailAddress==null) ? '' : PrimaryEmailAddress}
+                </div>
+                </div>
+            <span class="tools" style="float:right; margin-right:0px;">
+                <a href='/CRM/Contact/Edit/#=ContactID #' class="fa fa-edit" title='Edit'></a>
+                <a href='/CRM/Contact/Delete/#=ContactID #' title='Delete' class="icon-remove"></a>
+            </span>
+            </div>
+	</div>
+                </div>
+            </script>
+
+        </div>
